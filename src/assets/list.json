@@ -1,0 +1,18 @@
+[
+    {
+        "icon":"bx bxs-music",
+        "quality":"mp3"
+    },
+    {
+        "icon":"bx bxs-video",
+        "quality":"720p"
+    },
+    {
+        "icon":"bx bxs-video",
+        "quality":"1080p"
+    },
+    {
+        "icon":"bx bxs-video",
+        "quality":"4k"
+    }
+]
