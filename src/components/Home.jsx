@@ -3,7 +3,7 @@ import Preview from "./Preview";
 import Droplist from "./Droplist";
 
 
-function Content(){
+function Home(){
 
     //for video preview
     const [videoLink, setVideoLink] = useState('');
@@ -65,4 +65,4 @@ function Content(){
     );
 }
 
-export default Content;
+export default Home;

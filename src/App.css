@@ -1,1 +1,7 @@
 /* this css file is created to make changes that cannot be done with tailwind. */
+
+
+.react-player iframe{
+    position: relative;
+    z-index: 10 !important;
+}
