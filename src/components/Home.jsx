@@ -40,7 +40,7 @@ function Home(){
         }
     
         try {
-            const response = await axios.post('/download', {
+            const response = await axios.post('http://localhost:5000/download', {
                 url: submittedLink,
                 quality: selectedQuality
             });
