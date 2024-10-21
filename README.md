@@ -8,6 +8,6 @@
 
 - react.js
 - tailwind css
-- express.js (backend)
-- ytdl-core
+- flask (backend)
+- yt-dlp
 - ffmpeg
