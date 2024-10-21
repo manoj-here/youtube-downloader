@@ -13,7 +13,7 @@ function Home(){
         setSubmittedLink(videoLink); // Update the submitted link
 
         try {
-            const response = await fetch('http://localhost:3000/download', {
+            const response = await fetch('http://localhost:3000/check', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json', // Specify the content type
@@ -33,6 +33,8 @@ function Home(){
         catch (error) {console.error('Error:', error);}
     };
 
+    
+
 
     //for dropdown
     const [isOpen, setIsOpen] = useState(false);
@@ -42,9 +44,11 @@ function Home(){
             <h1 className="text-ytWhite text-6xl font-['Roboto_Condensed'] font-bold">
                 <span className="text-ytRed">YouTube</span> Downloader
             </h1>
-            <form onSubmit={handleSubmit} className="relative h-12 w-[700px] rounded-full overflow-hidden">
+            <form method="post" onSubmit={handleSubmit} className="relative h-12 w-[700px] rounded-full overflow-hidden">
                 <input type="text" value={ videoLink } onChange={(e) => setVideoLink(e.target.value)} id="ytUrl" className="h-full w-full bg-ytGray pl-6 text-ytWhite text-xl placeholder:text-[#ffffff44] focus:placeholder:text-transparent" placeholder="enter video url" />
-                <button id="urlSubmit" type="submit" className="absolute right-0 w-12 h-12 bg-[#ffffff22] border-2 border-ytGray rounded-full text-2xl text-ytWhite pt-[4px] pl-[1px] hover:brightness-125 active:brightness-150 transition-all duration-100"><i class='bx bx-search'></i></button>
+                <button id="urlSubmit" type="submit" className="absolute right-0 w-12 h-12 bg-[#ffffff22] border-2 border-ytGray rounded-full text-2xl text-ytWhite pt-[4px] pl-[1px] hover:brightness-125 active:brightness-150 transition-all duration-100">
+                    <i class='bx bx-search'></i>
+                </button>
             </form>
             <div className="flex items-center justify-between gap-5">
                 <Preview videoLink={submittedLink}/>
