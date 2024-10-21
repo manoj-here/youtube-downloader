@@ -11,6 +11,7 @@ function Home(){
     const [submittedLink, setSubmittedLink] = useState('');
     const [formats, setFormats] = useState([]);
     const [isOpen, setIsOpen] = useState(false);
+    const [selectedQuality, setSelectedQuality] = useState('');
     
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -20,7 +21,6 @@ function Home(){
             const response = await axios.post('http://localhost:5000/check', {
                 url: videoLink,
             });
-
             // Set formats from the response
             setFormats(response.data);
             console.log(response.data)
@@ -29,6 +29,31 @@ function Home(){
         }
     };
 
+    const handleQualitySelect = (quality) => {
+        setSelectedQuality(quality);
+    };
+
+    const handleDownload = async () => {
+        if (!submittedLink || !selectedQuality) {
+            alert("Please select a video link and quality before downloading.");
+            return; 
+        }
+    
+        try {
+            const response = await axios.post('/download', {
+                url: submittedLink,
+                quality: selectedQuality
+            });
+    
+            // const { downloadUrl } = response.data;    
+            // window.location.href = downloadUrl; 
+        } 
+        catch (error) {
+            console.error("Error downloading the video:", error);
+            alert("An error occurred while downloading the video. Please try again.");
+        }
+    };
+    
 
     return(
         <div className="absolute flex items-center justify-start flex-col h-[calc(100%-0.75rem)] w-auto left-[50%] -translate-x-1/2 top-3 gap-10">
@@ -51,11 +76,11 @@ function Home(){
                 <div className="w-70 h-60 flex flex-col justify-between">
                     <button onClick={()=>setIsOpen((prev) => !prev)} className="relative h-28 w-60 justify-start bg-ytGray text-ytWhite text-4xl flex items-center rounded-xl active:brightness-150 hover:brightness-125 transition-all duration-100">
                         <i className='bx bx-film ml-6'></i>
-                        <span id="qualityBtn" className="text-2xl pl-5">Quality</span>
+                        <span id="qualityBtn" className="text-2xl pl-5">{selectedQuality || 'Quality'}</span>
                         {!isOpen ? (<i className='bx bx-caret-down absolute right-5 text-[#ffffff55]'></i>) : (<i className='bx bx-caret-up absolute right-5 text-[#ffffff55]'></i>)}
-                        {isOpen && (<Droplist formats={formats} />)}
+                        {isOpen && (<Droplist formats={formats} selectQuality={handleQualitySelect} />)}
                     </button>
-                    <button className="h-28 w-60 justify-start bg-ytGray text-ytWhite text-4xl flex items-center rounded-xl active:brightness-150 hover:brightness-125 transition-all duration-100">
+                    <button onClick={handleDownload}  className="h-28 w-60 justify-start bg-ytGray text-ytWhite text-4xl flex items-center rounded-xl active:brightness-150 hover:brightness-125 transition-all duration-100">
                         <i className='bx bx-download ml-6' ></i>
                         <span className="text-2xl pl-5">Download</span>
                     </button>
