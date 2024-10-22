@@ -40,19 +40,38 @@ function Home(){
         }
     
         try {
+            // Set the responseType to 'blob' for downloading files
             const response = await axios.post('http://localhost:5000/download', {
                 url: submittedLink,
                 quality: selectedQuality
+            }, {
+                responseType: 'blob' // Important for binary file download
             });
     
-            // const { downloadUrl } = response.data;    
-            // window.location.href = downloadUrl; 
+            // Set the filename from the headers or default to 'download.mp3'
+            const disposition = response.headers['content-disposition'];
+            const filename = disposition ? disposition.split('filename=')[1] : 'download.mp3';
+    
+            // Create a blob URL
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+    
+            // Create a link element and trigger the download
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', filename);
+            document.body.appendChild(link);
+            link.click();
+            link.parentNode.removeChild(link);
+            
+            // Clean up the URL object
+            window.URL.revokeObjectURL(url);
         } 
         catch (error) {
             console.error("Error downloading the video:", error);
             alert("An error occurred while downloading the video. Please try again.");
-        }
+        }   
     };
+    
     
 
     return(
