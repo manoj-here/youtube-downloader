@@ -50,7 +50,16 @@ function Home(){
     
             // Set the filename from the headers or default to 'download.mp3'
             const disposition = response.headers['content-disposition'];
-            const filename = disposition ? disposition.split('filename=')[1] : 'download.mp3';
+            
+            let filename = 'download.webm'; // Default filename
+
+            if (disposition) {
+                const matches = disposition.match(/filename[^*=]*=((['"]).*?\2|[^;\n]*)/);
+                if (matches && matches[1]) {
+                    // Remove quotes if present
+                    filename = matches[1].replace(/['"]/g, '');
+                }
+            }
     
             // Create a blob URL
             const url = window.URL.createObjectURL(new Blob([response.data]));
