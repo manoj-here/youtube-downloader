@@ -12,6 +12,8 @@ function Home(){
     const [formats, setFormats] = useState([]);
     const [isOpen, setIsOpen] = useState(false);
     const [selectedQuality, setSelectedQuality] = useState('');
+    const [progress, setProgress] = useState(0);
+    const [progressState, setProgressState] = useState(false);
     
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -23,7 +25,6 @@ function Home(){
             });
             // Set formats from the response
             setFormats(response.data);
-            console.log(response.data)
         } catch (error) {
             console.error('Error fetching formats:', error);
         }
@@ -34,18 +35,24 @@ function Home(){
     };
 
     const handleDownload = async () => {
+        setProgressState(true);
         if (!submittedLink || !selectedQuality) {
             alert("Please select a video link and quality before downloading.");
             return; 
-        }
-    
+        }    
         try {
             // Set the responseType to 'blob' for downloading files
             const response = await axios.post('http://localhost:5000/download', {
                 url: submittedLink,
                 quality: selectedQuality
             }, {
-                responseType: 'blob' // Important for binary file download
+                responseType: 'blob', // Important for binary file download
+                onDownloadProgress: (progressEvent) => {
+                    // Calculate the progress percentage
+                    console.log(progressEvent)
+                    const percentage = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+                    setProgress(percentage);
+                }
             });
     
             // Set the filename from the headers or default to 'download.mp3'
@@ -78,7 +85,9 @@ function Home(){
         catch (error) {
             console.error("Error downloading the video:", error);
             alert("An error occurred while downloading the video. Please try again.");
-        }   
+        }finally{
+            setProgressState(false);
+        }
     };
     
     
@@ -101,19 +110,20 @@ function Home(){
             </form>
             <div className="flex items-center justify-between gap-5">
                 <Preview videoLink={submittedLink}/>
-                <div className="w-70 h-60 flex flex-col justify-between">
+                <div className=" relative w-70 h-60 flex flex-col justify-between">
                     <button onClick={()=>setIsOpen((prev) => !prev)} className="relative h-28 w-60 justify-start bg-ytGray text-ytWhite text-4xl flex items-center rounded-xl active:brightness-150 hover:brightness-125 transition-all duration-100">
                         <i className='bx bx-film ml-6'></i>
                         <span id="qualityBtn" className="text-2xl pl-5">{selectedQuality || 'Quality'}</span>
                         {!isOpen ? (<i className='bx bx-caret-down absolute right-5 text-[#ffffff55]'></i>) : (<i className='bx bx-caret-up absolute right-5 text-[#ffffff55]'></i>)}
-                        {isOpen && (<Droplist formats={formats} selectQuality={handleQualitySelect} />)}
                     </button>
+                        {isOpen && (<Droplist formats={formats} selectQuality={handleQualitySelect} />)}
                     <button onClick={handleDownload}  className="h-28 w-60 justify-start bg-ytGray text-ytWhite text-4xl flex items-center rounded-xl active:brightness-150 hover:brightness-125 transition-all duration-100">
                         <i className='bx bx-download ml-6' ></i>
                         <span className="text-2xl pl-5">Download</span>
                     </button>
                 </div>
             </div>
+            <div className={` ${ progressState ? 'block' : 'hidden' } relative bg-ytGray h-8 w-full rounded-full grid place-items-center text-xl text-[#ffffff44] overflow-hidden before:content-[''] before:absolute before:h-full before:w-[${progress}%] before:left-0 before:bg-[#ffffff22] before:rounded-full before:border-4 before:border-ytGray`}>{progress}%</div>
         </div>
     );
 }
